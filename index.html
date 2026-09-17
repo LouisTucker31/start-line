@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://geocoding-api.open-meteo.com https://api.open-meteo.com; base-uri 'self'; form-action 'none'; frame-ancestors 'none';">
+<title>Startline</title>
+<meta name="description" content="Race-week and race-day preparation for your triathlon.">
+<meta name="theme-color" content="#0B0F12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Startline">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="icon" href="assets/icon-192.png">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- Icon sprite: simple single-colour stroke icons, reused via <use> -->
+<svg class="icon-defs" aria-hidden="true">
+  <defs>
+    <symbol id="icon-stopwatch" viewBox="0 0 24 24">
+      <line x1="9.5" y1="2" x2="14.5" y2="2"/>
+      <line x1="12" y1="2" x2="12" y2="4.5"/>
+      <circle cx="12" cy="13.5" r="8"/>
+      <line x1="12" y1="13.5" x2="12" y2="9"/>
+      <line x1="12" y1="13.5" x2="15" y2="15.5"/>
+    </symbol>
+    <symbol id="icon-clipboard" viewBox="0 0 24 24">
+      <rect x="5" y="4" width="14" height="17" rx="2.2"/>
+      <rect x="9" y="2.3" width="6" height="3" rx="1"/>
+      <polyline points="8.5 12.5 10.8 14.8 15.5 9.8"/>
+    </symbol>
+    <symbol id="icon-bag" viewBox="0 0 24 24">
+      <path d="M8 8.5V6.2A4 4.2 0 0 1 16 6.2V8.5"/>
+      <rect x="4.5" y="8.5" width="15" height="12" rx="2.4"/>
+      <line x1="4.5" y1="13" x2="19.5" y2="13"/>
+    </symbol>
+    <symbol id="icon-flag" viewBox="0 0 24 24">
+      <line x1="6" y1="21" x2="6" y2="3.5"/>
+      <path d="M6 4.2 L18 8 L6 11.8 Z" fill="currentColor" stroke="none"/>
+    </symbol>
+    <symbol id="icon-wave" viewBox="0 0 24 24">
+      <path d="M3 9c1.6-1.8 3.4-1.8 5 0s3.4 1.8 5 0 3.4-1.8 5 0 2 2 2 2"/>
+      <path d="M3 15c1.6-1.8 3.4-1.8 5 0s3.4 1.8 5 0 3.4-1.8 5 0 2 2 2 2"/>
+    </symbol>
+    <symbol id="icon-bike" viewBox="0 0 24 24">
+      <circle cx="6" cy="17" r="3.4"/>
+      <circle cx="18" cy="17" r="3.4"/>
+      <path d="M6 17 L10 9 H15 L18 17"/>
+      <path d="M10 9 L13 13 H18"/>
+      <path d="M13 13 L9.5 17"/>
+      <line x1="8.5" y1="6.6" x2="11.5" y2="6.6"/>
+    </symbol>
+    <symbol id="icon-run" viewBox="0 0 24 24">
+      <circle cx="14.5" cy="4.6" r="1.7" fill="currentColor" stroke="none"/>
+      <path d="M12.8 8 L9.5 10 L11 13.2 L8 15 L6.5 19.5"/>
+      <path d="M11 13.2 L14.6 12.2 L17.5 15.5"/>
+      <path d="M12.8 8 L16 9 L15.2 13"/>
+    </symbol>
+    <symbol id="icon-cloud-sun" viewBox="0 0 24 24">
+      <circle cx="8" cy="7.5" r="2.6"/>
+      <line x1="8" y1="2.3" x2="8" y2="3.6"/>
+      <line x1="3.6" y1="7.5" x2="4.9" y2="7.5"/>
+      <line x1="4.4" y1="3.9" x2="5.3" y2="4.8"/>
+      <path d="M6 15.5a3.6 3.6 0 0 1 1-7 4.6 4.6 0 0 1 8.8-1.4A4 4 0 0 1 17.5 15.5Z"/>
+    </symbol>
+    <symbol id="icon-thermo" viewBox="0 0 24 24">
+      <path d="M13.5 13.9V5.4a2 2 0 0 0-4 0v8.5a3.6 3.6 0 1 0 4 0Z"/>
+      <line x1="11.5" y1="6.5" x2="11.5" y2="12.5"/>
+    </symbol>
+    <symbol id="icon-shield" viewBox="0 0 24 24">
+      <path d="M12 3 L19 6 V11.5 C19 16 16 19 12 21 C8 19 5 16 5 11.5 V6 Z"/>
+      <polyline points="8.6 11.6 10.8 13.8 15.4 9"/>
+    </symbol>
+    <symbol id="icon-pencil" viewBox="0 0 24 24">
+      <path d="M4 20 L4.9 16.2 L15.4 5.7 A2 2 0 0 1 18.3 5.7 L18.3 5.7 A2 2 0 0 1 18.3 8.6 L7.8 19.1 Z"/>
+      <line x1="13.2" y1="7.9" x2="16.1" y2="10.8"/>
+    </symbol>
+    <symbol id="icon-x" viewBox="0 0 24 24">
+      <line x1="6" y1="6" x2="18" y2="18"/>
+      <line x1="18" y1="6" x2="6" y2="18"/>
+    </symbol>
+    <symbol id="icon-chevron" viewBox="0 0 24 24">
+      <polyline points="9 6 15 12 9 18"/>
+    </symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24">
+      <line x1="12" y1="5" x2="12" y2="19"/>
+      <line x1="5" y1="12" x2="19" y2="12"/>
+    </symbol>
+    <symbol id="icon-pin" viewBox="0 0 24 24">
+      <path d="M12 21s7-6.6 7-11.5A7 7 0 0 0 5 9.5C5 14.4 12 21 12 21Z"/>
+      <circle cx="12" cy="9.5" r="2.4"/>
+    </symbol>
+    <symbol id="icon-info" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9"/>
+      <line x1="12" y1="11" x2="12" y2="16"/>
+      <circle cx="12" cy="7.6" r="0.35" fill="currentColor" stroke="currentColor" stroke-width="1.6"/>
+    </symbol>
+    <symbol id="icon-refresh" viewBox="0 0 24 24">
+      <path d="M4.5 12a7.5 7.5 0 0 1 12.7-5.4L19 8"/>
+      <polyline points="19 3.5 19 8 14.5 8"/>
+      <path d="M19.5 12a7.5 7.5 0 0 1-12.7 5.4L5 16"/>
+      <polyline points="5 20.5 5 16 9.5 16"/>
+    </symbol>
+    <symbol id="icon-tick" viewBox="0 0 24 24">
+      <polyline points="5 13 9.5 17.5 19 6.5"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="app-shell">
+
+  <header class="topbar" id="topbar">
+    <div class="topbar-title" id="topbar-title">Today</div>
+    <button class="topbar-action" id="topbar-action" type="button" hidden>
+      <svg class="icon" aria-hidden="true"><use href="#icon-pencil"/></svg>
+      <span class="sr-only">Edit race details</span>
+    </button>
+  </header>
+
+  <main class="views" id="views">
+
+    <!-- TODAY -->
+    <section class="view" id="view-today" data-view="today">
+
+      <button class="race-strip" id="race-strip" type="button" data-nav="race">
+        <div class="race-strip-top">
+          <span class="race-strip-name" id="today-race-name">Race name</span>
+          <svg class="icon icon-sm race-strip-chevron" aria-hidden="true"><use href="#icon-chevron"/></svg>
+        </div>
+        <div class="race-strip-meta" id="today-race-meta">Location · Date</div>
+        <div class="race-strip-count">
+          <span class="count-number" id="today-count-number">--</span>
+          <span class="count-unit" id="today-count-unit">days to go</span>
+        </div>
+      </button>
+
+      <section class="panel" aria-labelledby="today-phase-heading">
+        <div class="panel-head">
+          <h2 class="panel-title" id="today-phase-heading">Right now</h2>
+          <span class="panel-sub" id="today-phase-label">Early prep</span>
+        </div>
+        <p class="panel-blurb" id="today-phase-blurb">Loading your plan.</p>
+        <ul class="row-list" id="today-tasks"></ul>
+        <button class="link-row" type="button" data-nav="prep">See the full list<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-chevron"/></svg></button>
+      </section>
+
+      <button class="summary-row" type="button" data-nav="kit">
+        <svg class="icon" aria-hidden="true"><use href="#icon-bag"/></svg>
+        <span class="summary-row-text">
+          <span class="summary-row-title">Kit</span>
+          <span class="summary-row-detail" id="today-kit-summary">Checking your bags.</span>
+        </span>
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-chevron"/></svg>
+      </button>
+
+      <button class="summary-row" type="button" data-nav="race">
+        <svg class="icon" aria-hidden="true"><use href="#icon-cloud-sun"/></svg>
+        <span class="summary-row-text">
+          <span class="summary-row-title">Race-day weather</span>
+          <span class="summary-row-detail" id="today-weather-summary">Not checked yet.</span>
+        </span>
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-chevron"/></svg>
+      </button>
+
+      <div class="footnote">
+        <p>Everything you enter stays on this device. Nothing is uploaded anywhere.</p>
+        <button class="text-link" id="reset-link" type="button">Reset all data</button>
+      </div>
+    </section>
+
+    <!-- PREP -->
+    <section class="view" id="view-prep" data-view="prep" hidden>
+      <p class="view-intro" id="prep-intro">Everything to do before, during and after your race.</p>
+
+      <details class="disclosure rules-disclosure" id="rules-disclosure">
+        <summary>
+          <svg class="icon" aria-hidden="true"><use href="#icon-shield"/></svg>
+          <span class="disclosure-title">Know the rules</span>
+          <svg class="icon icon-sm disclosure-chevron" aria-hidden="true"><use href="#icon-chevron"/></svg>
+        </summary>
+        <ul class="rules-list">
+          <li>Wetsuits are legal below 20°C, optional between 20 and 24.6°C, and banned above 24.6°C for standard and sprint distances. Below 11°C the swim cannot go ahead.</li>
+          <li>Wetsuit neoprene must be no thicker than 5mm.</li>
+          <li>Helmets must not cover or enclose your ears.</li>
+          <li>Age-group cyclists must keep 12 metres from the rider in front outside overtaking.</li>
+          <li>A small flannel is allowed in transition if it is kept inside your shoes or under the rack, never loose on the ground.</li>
+          <li>No riding before the mount line and no riding after the dismount line.</li>
+          <li>No personal audio devices during the race.</li>
+        </ul>
+        <p class="rules-caveat">Rules vary by event and distance under British Triathlon and World Triathlon. Always check your race's final race information.</p>
+      </details>
+
+      <div class="phase-list" id="phase-list"></div>
+    </section>
+
+    <!-- KIT -->
+    <section class="view" id="view-kit" data-view="kit" hidden>
+      <div class="panel kit-summary">
+        <div class="panel-head">
+          <h2 class="panel-title">Packing</h2>
+          <span class="panel-sub" id="kit-summary-count">-- items left</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="kit-summary-bar"></div></div>
+      </div>
+      <div class="phase-list" id="kit-list"></div>
+    </section>
+
+    <!-- RACE -->
+    <section class="view" id="view-race" data-view="race" hidden>
+
+      <div class="panel race-card">
+        <div class="race-card-top">
+          <div>
+            <h2 class="race-card-name" id="race-name">Race name</h2>
+            <p class="race-card-meta" id="race-meta">Location · Date</p>
+          </div>
+          <span class="chip" id="race-countdown-chip">--</span>
+        </div>
+      </div>
+
+      <div class="stat-row" id="distance-row">
+        <div class="stat-item">
+          <svg class="icon" aria-hidden="true"><use href="#icon-wave"/></svg>
+          <span class="stat-value" id="stat-swim">--</span>
+          <span class="stat-label">Swim</span>
+        </div>
+        <div class="stat-item">
+          <svg class="icon" aria-hidden="true"><use href="#icon-bike"/></svg>
+          <span class="stat-value" id="stat-bike">--</span>
+          <span class="stat-label">Bike</span>
+        </div>
+        <div class="stat-item">
+          <svg class="icon" aria-hidden="true"><use href="#icon-run"/></svg>
+          <span class="stat-value" id="stat-run">--</span>
+          <span class="stat-label">Run</span>
+        </div>
+      </div>
+
+      <section class="panel weather-panel" aria-labelledby="weather-heading">
+        <div class="panel-head">
+          <h2 class="panel-title" id="weather-heading">Forecast</h2>
+          <button class="icon-button" id="weather-refresh" type="button" aria-label="Refresh forecast">
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-refresh"/></svg>
+          </button>
+        </div>
+        <div id="weather-body">
+          <p class="panel-blurb">Checking the forecast.</p>
+        </div>
+      </section>
+
+      <section class="panel wetsuit-panel" aria-labelledby="wetsuit-heading">
+        <div class="panel-head">
+          <h2 class="panel-title" id="wetsuit-heading">Wetsuit guidance</h2>
+        </div>
+        <label class="field" for="water-temp-input">
+          <span class="field-label">Expected water temperature (°C)</span>
+          <input class="field-input" id="water-temp-input" type="number" inputmode="decimal" step="0.5" min="-2" max="35" placeholder="e.g. 16">
+        </label>
+        <p class="wetsuit-readout" id="wetsuit-readout">Enter a water temperature to see whether a wetsuit is likely to be legal, optional or banned.</p>
+      </section>
+
+      <p class="view-footnote">Weather data by Open-Meteo. Forecasts are only available within 16 days of race day.</p>
+    </section>
+
+  </main>
+
+  <nav class="tabbar" aria-label="Primary">
+    <button class="tab" type="button" data-target="today" aria-current="true">
+      <svg class="icon" aria-hidden="true"><use href="#icon-stopwatch"/></svg>
+      <span>Today</span>
+    </button>
+    <button class="tab" type="button" data-target="prep">
+      <svg class="icon" aria-hidden="true"><use href="#icon-clipboard"/></svg>
+      <span>Prep</span>
+    </button>
+    <button class="tab" type="button" data-target="kit">
+      <svg class="icon" aria-hidden="true"><use href="#icon-bag"/></svg>
+      <span>Kit</span>
+    </button>
+    <button class="tab" type="button" data-target="race">
+      <svg class="icon" aria-hidden="true"><use href="#icon-flag"/></svg>
+      <span>Race</span>
+    </button>
+  </nav>
+</div>
+
+<!-- Edit race dialog -->
+<dialog class="sheet" id="dialog-race">
+  <form class="sheet-form" id="form-race">
+    <div class="sheet-head">
+      <h2 class="sheet-title">Race details</h2>
+      <button class="icon-button" type="button" data-close-dialog="dialog-race" aria-label="Close">
+        <svg class="icon" aria-hidden="true"><use href="#icon-x"/></svg>
+      </button>
+    </div>
+    <div class="sheet-body">
+      <label class="field">
+        <span class="field-label">Race name</span>
+        <input class="field-input" id="input-name" type="text" required maxlength="60" autocomplete="off">
+      </label>
+      <label class="field">
+        <span class="field-label">Location</span>
+        <input class="field-input" id="input-location" type="text" required maxlength="80" autocomplete="off" placeholder="e.g. Dorney Lake, Windsor">
+      </label>
+      <div class="field-row">
+        <label class="field">
+          <span class="field-label">Date</span>
+          <input class="field-input" id="input-date" type="date" required>
+        </label>
+        <label class="field">
+          <span class="field-label">Start time</span>
+          <input class="field-input" id="input-time" type="time" required>
+        </label>
+      </div>
+      <label class="field">
+        <span class="field-label">Distance</span>
+        <select class="field-input" id="input-distance">
+          <option value="supersprint">Super sprint · 400m / 10km / 2.5km</option>
+          <option value="sprint">Sprint · 750m / 20km / 5km</option>
+          <option value="standard">Standard (Olympic) · 1500m / 40km / 10km</option>
+          <option value="middle">Middle (70.3) · 1.9km / 90km / 21.1km</option>
+          <option value="long">Long (Ironman) · 3.8km / 180km / 42.2km</option>
+          <option value="custom">Custom distances</option>
+        </select>
+      </label>
+      <div class="field-row field-row-3" id="custom-distance-row" hidden>
+        <label class="field">
+          <span class="field-label">Swim (m)</span>
+          <input class="field-input" id="input-swim" type="number" inputmode="numeric" min="0" max="20000">
+        </label>
+        <label class="field">
+          <span class="field-label">Bike (km)</span>
+          <input class="field-input" id="input-bike" type="number" inputmode="decimal" min="0" max="400" step="0.1">
+        </label>
+        <label class="field">
+          <span class="field-label">Run (km)</span>
+          <input class="field-input" id="input-run" type="number" inputmode="decimal" min="0" max="120" step="0.1">
+        </label>
+      </div>
+      <label class="field">
+        <span class="field-label">Notes (optional)</span>
+        <textarea class="field-input field-textarea" id="input-notes" maxlength="200" rows="2" placeholder="Wave time, category, bib colour"></textarea>
+      </label>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn btn-secondary" type="button" data-close-dialog="dialog-race">Cancel</button>
+      <button class="btn btn-primary" type="submit">Save changes</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Add task/item dialog -->
+<dialog class="sheet" id="dialog-add-item">
+  <form class="sheet-form" id="form-add-item">
+    <div class="sheet-head">
+      <h2 class="sheet-title" id="add-item-title">Add task</h2>
+      <button class="icon-button" type="button" data-close-dialog="dialog-add-item" aria-label="Close">
+        <svg class="icon" aria-hidden="true"><use href="#icon-x"/></svg>
+      </button>
+    </div>
+    <div class="sheet-body">
+      <label class="field">
+        <span class="field-label">Title</span>
+        <input class="field-input" id="add-item-input-title" type="text" required maxlength="60" autocomplete="off">
+      </label>
+      <label class="field">
+        <span class="field-label">Note (optional)</span>
+        <input class="field-input" id="add-item-input-detail" type="text" maxlength="80" autocomplete="off">
+      </label>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn btn-secondary" type="button" data-close-dialog="dialog-add-item">Cancel</button>
+      <button class="btn btn-primary" type="submit">Add</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Confirm dialog -->
+<dialog class="sheet sheet-alert" id="dialog-confirm">
+  <div class="sheet-body">
+    <h2 class="sheet-title" id="confirm-title">Are you sure?</h2>
+    <p class="sheet-message" id="confirm-message"></p>
+  </div>
+  <div class="sheet-actions">
+    <button class="btn btn-secondary" type="button" id="confirm-cancel">Cancel</button>
+    <button class="btn btn-destructive" type="button" id="confirm-ok">Confirm</button>
+  </div>
+</dialog>
+
+<script src="js/main.js"></script>
+</body>
+</html>
