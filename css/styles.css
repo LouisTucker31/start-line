@@ -553,12 +553,12 @@ input, select, textarea { font-family: inherit; font-size: 16px; }
 .stat-label { font-size: var(--text-caption); color: var(--text-secondary); font-weight: 600; }
 
 .weather-body-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px 10px;
   margin-top: 10px;
 }
-.weather-stat { display: flex; flex-direction: column; gap: 2px; min-width: 84px; }
+.weather-stat { display: flex; flex-direction: column; gap: 2px; }
 .weather-stat-value { font-size: var(--text-headline); font-weight: 700; }
 .weather-stat-label { font-size: var(--text-caption); color: var(--text-secondary); }
 .weather-error {
