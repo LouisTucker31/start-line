@@ -168,7 +168,7 @@ function defaultState() {
    ========================================================================== */
 
 var state = loadState();
-var openPhases = new Set([currentPhaseKey()]);
+var openPhases = new Set();
 var openKit = new Set();
 var addItemContext = null;
 var lastFocusedElement = null;
@@ -944,7 +944,7 @@ els.resetLink.addEventListener("click", function () {
     "This clears your race details and every checklist. This cannot be undone.",
     function () {
       state = defaultState();
-      openPhases = new Set([currentPhaseKey()]);
+      openPhases = new Set();
       openKit = new Set();
       saveState();
       renderAll();
