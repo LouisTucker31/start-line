@@ -9,7 +9,7 @@
   --bg-elevated: #FFFFFF;
   --text-primary: #12181C;
   --text-secondary: rgba(18, 24, 28, 0.62);
-  --text-tertiary: rgba(18, 24, 28, 0.34);
+  --text-tertiary: rgba(18, 24, 28, 0.5);
   --separator: rgba(18, 24, 28, 0.12);
   --accent: #E85321;
   --accent-strong: #C6431A;
@@ -49,7 +49,7 @@
     --bg-elevated: #1A2024;
     --text-primary: #F4F5F3;
     --text-secondary: rgba(244, 245, 243, 0.62);
-    --text-tertiary: rgba(244, 245, 243, 0.32);
+    --text-tertiary: rgba(244, 245, 243, 0.5);
     --separator: rgba(244, 245, 243, 0.13);
     --accent: #FF6A38;
     --accent-strong: #FF8657;
@@ -194,7 +194,7 @@ input, select, textarea { font-family: inherit; font-size: 16px; }
 }
 .view-footnote {
   font-size: var(--text-caption);
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
   text-align: center;
   padding: 4px 8px 4px;
 }
@@ -346,7 +346,7 @@ input, select, textarea { font-family: inherit; font-size: 16px; }
 }
 .footnote p {
   font-size: var(--text-caption);
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
 }
 
 /* Disclosure (details/summary) — phases, kit categories, rules */
@@ -468,7 +468,7 @@ input, select, textarea { font-family: inherit; font-size: 16px; }
 }
 .rules-caveat {
   font-size: var(--text-caption);
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
   padding: 2px 18px 16px;
 }
 
@@ -485,7 +485,6 @@ input, select, textarea { font-family: inherit; font-size: 16px; }
   border-radius: var(--radius-capsule);
   white-space: nowrap;
 }
-.chip.chip-accent { background: var(--accent); color: var(--on-accent); }
 
 .stat-row {
   display: flex;

@@ -307,7 +307,7 @@ function shortCountdownText() {
 function computeWetsuitStatus(tempC) {
   if (tempC === null || tempC === undefined || isNaN(tempC)) return null;
   if (tempC < 11) {
-    return { status: "banned", message: "Below 11°C, open-water swimming in competition cannot go ahead under British Triathlon rules. Watch for official updates." };
+    return { status: "banned", message: "Below 11°C, open-water swimming cannot go ahead under British Triathlon rules." };
   }
   if (tempC < 22) {
     return { status: "legal", message: "A wetsuit is legal at this temperature, and most people choose to wear one." };
@@ -654,7 +654,7 @@ function updateWetsuitReadout() {
   var result = computeWetsuitStatus(tempC);
   els.wetsuitReadout.classList.remove("status-legal", "status-optional", "status-banned");
   if (!result) {
-    els.wetsuitReadout.textContent = "Enter a water temperature to see whether a wetsuit is likely to be legal, optional or banned.";
+    els.wetsuitReadout.textContent = "Enter a water temperature to see whether a wetsuit is legal, optional or banned.";
     return;
   }
   els.wetsuitReadout.classList.add("status-" + result.status);
@@ -728,7 +728,7 @@ function weatherAdvisory(payload) {
   if (payload.precipMax >= 50) return "Rain looks likely. Pack accordingly for transition.";
   if (payload.windMax >= 25) return "A breezy forecast for the bike leg.";
   if (payload.tempMax <= 10) return "A cold start. Plan warm layers for the wait before your wave.";
-  return "Conditions look reasonable at the moment. Check again closer to race day.";
+  return "Conditions look reasonable. Check again closer to race day.";
 }
 
 /* ==========================================================================

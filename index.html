@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://geocoding-api.open-meteo.com https://api.open-meteo.com; base-uri 'self'; form-action 'none'; frame-ancestors 'none';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://geocoding-api.open-meteo.com https://api.open-meteo.com; base-uri 'self'; form-action 'none'; frame-ancestors 'none';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Startline</title>
 <meta name="description" content="Race-week and race-day preparation for your triathlon.">
 <meta name="theme-color" content="#0B0F12">
@@ -114,7 +115,7 @@
 <div class="app-shell">
 
   <header class="topbar" id="topbar">
-    <div class="topbar-title" id="topbar-title">Today</div>
+    <h1 class="topbar-title" id="topbar-title">Today</h1>
     <button class="topbar-action" id="topbar-action" type="button" hidden>
       <svg class="icon" aria-hidden="true"><use href="#icon-pencil"/></svg>
       <span class="sr-only">Edit race details</span>
@@ -260,7 +261,7 @@
           <span class="field-label">Expected water temperature (°C)</span>
           <input class="field-input" id="water-temp-input" type="number" inputmode="decimal" step="0.5" min="-2" max="35" placeholder="e.g. 16">
         </label>
-        <p class="wetsuit-readout" id="wetsuit-readout">Enter a water temperature to see whether a wetsuit is likely to be legal, optional or banned.</p>
+        <p class="wetsuit-readout" id="wetsuit-readout">Enter a water temperature to see whether a wetsuit is legal, optional or banned.</p>
       </section>
 
       <p class="view-footnote">Weather data by Open-Meteo. Forecasts are only available within 16 days of race day.</p>
