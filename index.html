@@ -286,9 +286,10 @@
           <span class="field-label">Race name</span>
           <input class="field-input" id="create-input-name" type="text" required maxlength="60" autocomplete="off" placeholder="e.g. Windsor Triathlon">
         </label>
-        <label class="field">
+        <label class="field autocomplete-field">
           <span class="field-label">Location</span>
-          <input class="field-input" id="create-input-location" type="text" required maxlength="80" autocomplete="off" placeholder="e.g. Dorney Lake, Windsor">
+          <input class="field-input" id="create-input-location" type="text" required maxlength="80" autocomplete="off" placeholder="Search for a town or city" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="create-location-options">
+          <ul class="autocomplete-list" id="create-location-options" role="listbox" hidden></ul>
         </label>
         <div class="field-row">
           <label class="field">
@@ -372,9 +373,10 @@
         <span class="field-label">Race name</span>
         <input class="field-input" id="input-name" type="text" required maxlength="60" autocomplete="off">
       </label>
-      <label class="field">
+      <label class="field autocomplete-field">
         <span class="field-label">Location</span>
-        <input class="field-input" id="input-location" type="text" required maxlength="80" autocomplete="off" placeholder="e.g. Dorney Lake, Windsor">
+        <input class="field-input" id="input-location" type="text" required maxlength="80" autocomplete="off" placeholder="Search for a town or city" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="edit-location-options">
+        <ul class="autocomplete-list" id="edit-location-options" role="listbox" hidden></ul>
       </label>
       <div class="field-row">
         <label class="field">

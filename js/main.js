@@ -64,6 +64,8 @@ function blankRace() {
   return {
     name: "",
     location: "",
+    locationLat: null,
+    locationLon: null,
     date: "",
     time: "",
     distancePreset: "standard",
@@ -370,6 +372,7 @@ var els = {
   formRace: document.getElementById("form-race"),
   inputName: document.getElementById("input-name"),
   inputLocation: document.getElementById("input-location"),
+  inputLocationOptions: document.getElementById("edit-location-options"),
   inputDate: document.getElementById("input-date"),
   inputTime: document.getElementById("input-time"),
   inputDistance: document.getElementById("input-distance"),
@@ -382,6 +385,7 @@ var els = {
   formCreateRace: document.getElementById("form-create-race"),
   createInputName: document.getElementById("create-input-name"),
   createInputLocation: document.getElementById("create-input-location"),
+  createInputLocationOptions: document.getElementById("create-location-options"),
   createInputDate: document.getElementById("create-input-date"),
   createInputTime: document.getElementById("create-input-time"),
   createInputDistance: document.getElementById("create-input-distance"),
@@ -403,6 +407,15 @@ var els = {
   confirmOk: document.getElementById("confirm-ok"),
   confirmCancel: document.getElementById("confirm-cancel")
 };
+
+var editLocationCoords = null;
+var createLocationCoords = null;
+var editLocationAutocomplete = createLocationAutocomplete(els.inputLocation, els.inputLocationOptions, function (coords) {
+  editLocationCoords = coords;
+});
+var createLocationAutocompleteInstance = createLocationAutocomplete(els.createInputLocation, els.createInputLocationOptions, function (coords) {
+  createLocationCoords = coords;
+});
 
 /* ==========================================================================
    Row / list rendering helpers
@@ -775,7 +788,11 @@ function fetchWeather(force) {
   }
   renderWeatherLoading();
 
-  geocodeLocation(race.location)
+  var geoLookup = (race.locationLat != null && race.locationLon != null)
+    ? Promise.resolve({ lat: race.locationLat, lon: race.locationLon })
+    : geocodeLocation(race.location);
+
+  geoLookup
     .then(function (geo) {
       return getForecast(geo.lat, geo.lon, race.date).then(function (payload) {
         state.weatherCache = { key: cacheKey, locationKey: race.location, date: race.date, data: payload };
@@ -815,6 +832,38 @@ function geocodeLocation(location) {
   }
 
   return tryCandidate(0, "GB");
+}
+
+function searchLocations(query) {
+  var baseUrl = "https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(query) + "&count=6&language=en&format=json";
+  function fetchResults(url) {
+    return fetch(url).then(function (res) {
+      if (!res.ok) throw new Error("Geocoding request failed.");
+      return res.json();
+    }).then(function (json) {
+      return json.results || [];
+    });
+  }
+  return Promise.all([
+    fetchResults(baseUrl + "&countryCode=GB"),
+    fetchResults(baseUrl)
+  ]).then(function (lists) {
+    var seen = {};
+    var merged = [];
+    lists[0].concat(lists[1]).forEach(function (result) {
+      if (seen[result.id]) return;
+      seen[result.id] = true;
+      merged.push(result);
+    });
+    return merged.slice(0, 8);
+  });
+}
+
+function formatLocationResult(result) {
+  var parts = [result.name];
+  if (result.admin1 && result.admin1 !== result.name) parts.push(result.admin1);
+  if (result.country) parts.push(result.country);
+  return parts.join(", ");
 }
 
 function getForecast(lat, lon, dateStr) {
@@ -955,6 +1004,10 @@ function openRaceDialog() {
   els.inputBike.value = race.customBike != null ? race.customBike : "";
   els.inputRun.value = race.customRun != null ? race.customRun : "";
   els.inputNotes.value = race.notes || "";
+  editLocationCoords = (race.locationLat != null && race.locationLon != null)
+    ? { lat: race.locationLat, lon: race.locationLon }
+    : null;
+  editLocationAutocomplete.setCoords(editLocationCoords);
   toggleCustomDistanceRow();
   openDialog(els.dialogRace);
 }
@@ -966,11 +1019,119 @@ function toggleCustomDistanceRow() {
 function resetCreateRaceForm() {
   els.formCreateRace.reset();
   els.createInputDistance.value = "standard";
+  createLocationCoords = null;
+  createLocationAutocompleteInstance.reset();
   toggleCreateCustomDistanceRow();
 }
 
 function toggleCreateCustomDistanceRow() {
   els.createCustomDistanceRow.hidden = els.createInputDistance.value !== "custom";
+}
+
+/* ==========================================================================
+   Location autocomplete
+   ========================================================================== */
+
+function createLocationAutocomplete(inputEl, listEl, onSelect) {
+  var debounceTimer = null;
+  var results = [];
+  var activeIndex = -1;
+  var selectedCoords = null;
+  var requestId = 0;
+
+  function closeList() {
+    listEl.hidden = true;
+    listEl.innerHTML = "";
+    activeIndex = -1;
+    inputEl.setAttribute("aria-expanded", "false");
+    inputEl.removeAttribute("aria-activedescendant");
+  }
+
+  function renderList() {
+    listEl.innerHTML = "";
+    if (!results.length) { closeList(); return; }
+    results.forEach(function (result, index) {
+      var li = document.createElement("li");
+      li.className = "autocomplete-option" + (index === activeIndex ? " is-active" : "");
+      li.id = inputEl.id + "-option-" + index;
+      li.setAttribute("role", "option");
+      li.setAttribute("aria-selected", index === activeIndex ? "true" : "false");
+      li.textContent = formatLocationResult(result);
+      li.addEventListener("mousedown", function (evt) {
+        evt.preventDefault();
+        selectResult(index);
+      });
+      listEl.appendChild(li);
+    });
+    listEl.hidden = false;
+    inputEl.setAttribute("aria-expanded", "true");
+    if (activeIndex >= 0) {
+      inputEl.setAttribute("aria-activedescendant", inputEl.id + "-option-" + activeIndex);
+    } else {
+      inputEl.removeAttribute("aria-activedescendant");
+    }
+  }
+
+  function selectResult(index) {
+    var result = results[index];
+    if (!result) return;
+    inputEl.value = formatLocationResult(result);
+    selectedCoords = { lat: result.latitude, lon: result.longitude };
+    onSelect(selectedCoords);
+    closeList();
+  }
+
+  inputEl.addEventListener("input", function () {
+    selectedCoords = null;
+    onSelect(null);
+    var query = inputEl.value.trim();
+    if (debounceTimer) clearTimeout(debounceTimer);
+    if (query.length < 3) { closeList(); return; }
+    debounceTimer = setTimeout(function () {
+      var thisRequest = ++requestId;
+      searchLocations(query).then(function (found) {
+        if (thisRequest !== requestId) return;
+        results = found;
+        activeIndex = -1;
+        renderList();
+      }).catch(function () {
+        if (thisRequest !== requestId) return;
+        closeList();
+      });
+    }, 350);
+  });
+
+  inputEl.addEventListener("keydown", function (evt) {
+    if (listEl.hidden) return;
+    if (evt.key === "ArrowDown") {
+      evt.preventDefault();
+      activeIndex = Math.min(activeIndex + 1, results.length - 1);
+      renderList();
+    } else if (evt.key === "ArrowUp") {
+      evt.preventDefault();
+      activeIndex = Math.max(activeIndex - 1, 0);
+      renderList();
+    } else if (evt.key === "Enter") {
+      evt.preventDefault();
+      selectResult(activeIndex >= 0 ? activeIndex : 0);
+    } else if (evt.key === "Escape") {
+      closeList();
+    }
+  });
+
+  inputEl.addEventListener("blur", function () {
+    setTimeout(closeList, 100);
+  });
+
+  return {
+    reset: function () {
+      selectedCoords = null;
+      results = [];
+      closeList();
+    },
+    getCoords: function () { return selectedCoords; },
+    setCoords: function (coords) { selectedCoords = coords; }
+  };
 }
 
 /* ==========================================================================
@@ -1023,6 +1184,8 @@ els.formRace.addEventListener("submit", function (evt) {
   var previousDate = state.race.date;
   state.race.name = els.inputName.value.trim();
   state.race.location = els.inputLocation.value.trim();
+  state.race.locationLat = editLocationCoords ? editLocationCoords.lat : null;
+  state.race.locationLon = editLocationCoords ? editLocationCoords.lon : null;
   state.race.date = els.inputDate.value;
   state.race.time = els.inputTime.value;
   state.race.distancePreset = els.inputDistance.value;
@@ -1045,6 +1208,8 @@ els.formCreateRace.addEventListener("submit", function (evt) {
   var race = blankRace();
   race.name = els.createInputName.value.trim();
   race.location = els.createInputLocation.value.trim();
+  race.locationLat = createLocationCoords ? createLocationCoords.lat : null;
+  race.locationLon = createLocationCoords ? createLocationCoords.lon : null;
   race.date = els.createInputDate.value;
   race.time = els.createInputTime.value;
   race.distancePreset = els.createInputDistance.value;
