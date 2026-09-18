@@ -1258,23 +1258,6 @@ els.waterTempInput.addEventListener("input", function () {
 });
 
 /* ==========================================================================
-   Viewport height (iOS Safari keyboard/toolbar fix)
-   ========================================================================== */
-
-function setAppHeight() {
-  var height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-  document.documentElement.style.setProperty("--app-height", height + "px");
-}
-
-if (window.visualViewport) {
-  window.visualViewport.addEventListener("resize", setAppHeight);
-  window.visualViewport.addEventListener("scroll", setAppHeight);
-} else {
-  window.addEventListener("resize", setAppHeight);
-}
-setAppHeight();
-
-/* ==========================================================================
    Init
    ========================================================================== */
 
