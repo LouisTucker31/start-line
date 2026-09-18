@@ -38,7 +38,6 @@
   --radius-xl: 20px;
   --radius-capsule: 999px;
 
-  --tabbar-height: 62px;
   --topbar-height: 52px;
 }
 
@@ -142,7 +141,7 @@ input, select, textarea { font-family: inherit; font-size: 16px; }
 .views {
   flex: 1;
   overflow-y: auto;
-  padding: 16px 20px calc(var(--tabbar-height) + env(safe-area-inset-bottom) + 32px);
+  padding: 16px 20px 24px;
   max-width: 640px;
   width: 100%;
   margin: 0 auto;
@@ -152,8 +151,7 @@ input, select, textarea { font-family: inherit; font-size: 16px; }
 .view[hidden] { display: none; }
 
 .tabbar {
-  position: fixed;
-  left: 0; right: 0; bottom: 0;
+  flex-shrink: 0;
   z-index: 30;
   display: flex;
   justify-content: space-around;
