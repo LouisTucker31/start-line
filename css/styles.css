@@ -359,6 +359,7 @@ input, select, textarea { font-family: inherit; font-size: 16px; }
   gap: 10px;
   padding: 56px 24px 24px;
 }
+.empty-state[hidden] { display: none; }
 .empty-state-icon {
   width: 44px;
   height: 44px;
