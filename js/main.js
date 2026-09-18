@@ -1263,3 +1263,20 @@ els.waterTempInput.addEventListener("input", function () {
 
 renderAll();
 navigate("today");
+
+/* iOS standalone PWA cold-launch fix: WebKit can paint the first frame
+   against a stale viewport, leaving position:fixed elements (the tab bar)
+   offset until a scroll or tap forces a recompute. Force that recompute
+   ourselves right after the page becomes visible. */
+function forceViewportReflow() {
+  window.scrollTo(0, 1);
+  window.scrollTo(0, 0);
+}
+window.addEventListener("load", function () {
+  requestAnimationFrame(function () {
+    requestAnimationFrame(forceViewportReflow);
+  });
+});
+document.addEventListener("visibilitychange", function () {
+  if (document.visibilityState === "visible") forceViewportReflow();
+});

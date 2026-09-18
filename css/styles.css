@@ -153,11 +153,11 @@ input, select, textarea { font-family: inherit; font-size: 16px; }
 
 .tabbar {
   position: fixed;
-  left: 0; right: 0; bottom: 0;
+  left: 0; right: 0; bottom: env(safe-area-inset-bottom, 0px);
   z-index: 30;
   display: flex;
   justify-content: space-around;
-  padding: 8px 8px max(8px, env(safe-area-inset-bottom));
+  padding: 8px;
   background: color-mix(in srgb, var(--bg-elevated) 82%, transparent);
   backdrop-filter: blur(20px) saturate(1.2);
   -webkit-backdrop-filter: blur(20px) saturate(1.2);
