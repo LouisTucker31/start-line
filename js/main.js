@@ -309,13 +309,13 @@ function computeWetsuitStatus(tempC) {
   if (tempC < 11) {
     return { status: "banned", message: "Below 11°C, open-water swimming in competition cannot go ahead under British Triathlon rules. Watch for official updates." };
   }
-  if (tempC < 20) {
+  if (tempC < 22) {
     return { status: "legal", message: "A wetsuit is legal at this temperature, and most people choose to wear one." };
   }
   if (tempC <= 24.6) {
-    return { status: "optional", message: "A wetsuit is optional at this temperature for standard and sprint distances. It is your choice." };
+    return { status: "optional", message: "A wetsuit is optional at this temperature if you're in the 60+ age group. Under 60, wetsuits are banned above 22°C." };
   }
-  return { status: "banned", message: "Above 24.6°C, wetsuits are banned for standard and sprint distances." };
+  return { status: "banned", message: "Above 24.6°C, wetsuits are banned under British Triathlon and World Triathlon rules." };
 }
 
 /* ==========================================================================
@@ -759,19 +759,35 @@ function fetchWeather(force) {
     })
     .catch(function (err) {
       console.error(err);
-      renderWeatherError("Could not load the forecast. Check your connection and try again.");
+      var message = err && err.message === "Location not found."
+        ? "Could not find that location. Try a nearby town or city name instead."
+        : "Could not load the forecast. Check your connection and try again.";
+      renderWeatherError(message);
     });
 }
 
 function geocodeLocation(location) {
-  var url = "https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(location) + "&count=1&language=en&format=json";
-  return fetch(url).then(function (res) {
-    if (!res.ok) throw new Error("Geocoding request failed.");
-    return res.json();
-  }).then(function (json) {
-    if (!json.results || !json.results.length) throw new Error("Location not found.");
-    return { lat: json.results[0].latitude, lon: json.results[0].longitude };
-  });
+  var candidates = [location];
+  var parts = location.split(",").map(function (part) { return part.trim(); }).filter(Boolean);
+  if (parts.length > 1) candidates.push(parts[parts.length - 1]);
+
+  function tryCandidate(index, countryCode) {
+    if (index >= candidates.length) {
+      if (countryCode) return tryCandidate(0, null);
+      throw new Error("Location not found.");
+    }
+    var url = "https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(candidates[index]) + "&count=1&language=en&format=json";
+    if (countryCode) url += "&countryCode=" + countryCode;
+    return fetch(url).then(function (res) {
+      if (!res.ok) throw new Error("Geocoding request failed.");
+      return res.json();
+    }).then(function (json) {
+      if (!json.results || !json.results.length) return tryCandidate(index + 1, countryCode);
+      return { lat: json.results[0].latitude, lon: json.results[0].longitude };
+    });
+  }
+
+  return tryCandidate(0, "GB");
 }
 
 function getForecast(lat, lon, dateStr) {
