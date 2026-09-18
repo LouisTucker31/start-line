@@ -657,18 +657,16 @@ dialog.sheet[open] {
 dialog.sheet-alert {
   align-items: center !important;
 }
-dialog.sheet-alert > .sheet-body {
+.sheet-alert-card {
   background: var(--bg-elevated);
   border-radius: var(--radius-xl);
-  padding: 22px 20px 6px;
-  width: calc(100% - 48px);
+  width: 100%;
+  max-width: 340px;
+  margin: auto;
+  overflow: hidden;
 }
-dialog.sheet-alert .sheet-actions {
-  background: var(--bg-elevated);
-  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
-  width: calc(100% - 48px);
-  margin: 0 auto;
-}
+.sheet-alert-card .sheet-body { padding: 22px 20px 6px; }
+.sheet-alert-card .sheet-actions { border-top: none; padding: 12px 20px calc(16px + env(safe-area-inset-bottom)); }
 
 .sheet-head {
   display: flex;
