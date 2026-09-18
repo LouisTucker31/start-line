@@ -344,6 +344,7 @@ var els = {
   todayTasks: document.getElementById("today-tasks"),
   todayKitSummary: document.getElementById("today-kit-summary"),
   todayWeatherSummary: document.getElementById("today-weather-summary"),
+  todayFootnote: document.getElementById("today-footnote"),
   resetLink: document.getElementById("reset-link"),
   finishRaceBtn: document.getElementById("finish-race-btn"),
 
@@ -555,6 +556,7 @@ function renderToday() {
   var race = state.race;
   els.todayEmpty.hidden = !!race;
   els.todayHasRace.hidden = !race;
+  els.todayFootnote.hidden = !race;
   if (!race) return;
 
   els.todayRaceName.textContent = race.name || "Your race";

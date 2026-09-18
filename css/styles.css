@@ -346,6 +346,7 @@ input, select, textarea { font-family: inherit; font-size: 16px; }
   align-items: center;
   gap: 2px;
 }
+.footnote[hidden] { display: none; }
 .footnote p {
   font-size: var(--text-caption);
   color: var(--text-secondary);
