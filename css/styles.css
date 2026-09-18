@@ -137,6 +137,7 @@ input, select, textarea { font-family: inherit; font-size: 16px; }
   display: flex; align-items: center; justify-content: center;
 }
 .topbar-action:active { background: var(--separator); }
+.topbar-action[hidden] { display: none; }
 
 .views {
   flex: 1;
@@ -387,6 +388,9 @@ input, select, textarea { font-family: inherit; font-size: 16px; }
   flex-direction: column;
   gap: 16px;
 }
+#today-has-race[hidden] {
+  display: none;
+}
 
 /* Disclosure (details/summary) — phases, kit categories, rules */
 .disclosure {
@@ -583,6 +587,7 @@ input, select, textarea { font-family: inherit; font-size: 16px; }
 .field-row .field { min-width: 0; }
 .field-row-3 { display: flex; gap: 8px; }
 .field-row-3 .field { min-width: 0; }
+.field-row[hidden], .field-row-3[hidden] { display: none; }
 
 input[type="date"].field-input,
 input[type="time"].field-input {
