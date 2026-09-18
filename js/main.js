@@ -747,9 +747,9 @@ function renderWeatherError(message) {
 function renderWeatherData(payload) {
   var rows = [];
   if (payload.tempAtStart != null) {
-    rows.push({ label: "At your " + state.race.time + " start", value: Math.round(payload.tempAtStart) + "\u00B0C" });
+    rows.push({ label: "At " + state.race.time, value: Math.round(payload.tempAtStart) + "\u00B0C" });
   }
-  rows.push({ label: "Range for the day", value: Math.round(payload.tempMin) + "\u2013" + Math.round(payload.tempMax) + "\u00B0C" });
+  rows.push({ label: "Day range", value: Math.round(payload.tempMin) + "\u2013" + Math.round(payload.tempMax) + "\u00B0C" });
   rows.push({ label: "Chance of rain", value: Math.round(payload.precipMax) + "%" });
   rows.push({ label: "Wind", value: Math.round(payload.windMax) + " km/h" });
   if (payload.sunrise) rows.push({ label: "Sunrise", value: payload.sunrise });
@@ -1140,6 +1140,13 @@ function createLocationAutocomplete(inputEl, listEl, onSelect) {
 
 els.tabs.forEach(function (tab) {
   tab.addEventListener("click", function () { navigate(tab.dataset.target); });
+});
+
+els.todayTasks.addEventListener("change", function (evt) {
+  if (evt.target && evt.target.matches('input[type="checkbox"]')) {
+    var li = evt.target.closest("li");
+    if (li) toggleItem(li.dataset.kind, li.dataset.key, li.dataset.id);
+  }
 });
 
 document.querySelectorAll("[data-nav]").forEach(function (el) {
