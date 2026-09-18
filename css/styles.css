@@ -546,6 +546,18 @@ input, select, textarea { font-family: inherit; font-size: 16px; }
 .field-row-3 { display: flex; gap: 8px; }
 .field-row-3 .field { min-width: 0; }
 
+input[type="date"].field-input,
+input[type="time"].field-input {
+  max-width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+}
+input[type="date"].field-input::-webkit-date-and-time-value,
+input[type="time"].field-input::-webkit-date-and-time-value {
+  text-align: left;
+  min-width: 0;
+}
+
 .wetsuit-readout {
   margin-top: 12px;
   font-size: var(--text-subheadline);
@@ -655,4 +667,8 @@ dialog.sheet-alert .sheet-actions {
 @media (min-width: 700px) {
   .views { padding-left: 32px; padding-right: 32px; }
   .stat-row, .field-row { gap: 16px; }
+}
+
+@media (max-width: 360px) {
+  .field-row:not(.field-row-3) { flex-direction: column; }
 }
