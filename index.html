@@ -127,45 +127,57 @@
     <!-- TODAY -->
     <section class="view" id="view-today" data-view="today">
 
-      <button class="race-strip" id="race-strip" type="button" data-nav="race">
-        <div class="race-strip-top">
-          <span class="race-strip-name" id="today-race-name">Race name</span>
-          <svg class="icon icon-sm race-strip-chevron" aria-hidden="true"><use href="#icon-chevron"/></svg>
-        </div>
-        <div class="race-strip-meta" id="today-race-meta">Location · Date</div>
-        <div class="race-strip-count">
-          <span class="count-number" id="today-count-number">--</span>
-          <span class="count-unit" id="today-count-unit">days to go</span>
-        </div>
-      </button>
+      <!-- Empty state: no race set up yet -->
+      <div class="empty-state" id="today-empty">
+        <svg class="icon empty-state-icon" aria-hidden="true"><use href="#icon-flag"/></svg>
+        <h2 class="empty-state-title">No race set up yet</h2>
+        <p class="empty-state-blurb">Add your race details to get a countdown, a prep checklist, a kit list and race-day weather, all in one place.</p>
+        <button class="btn btn-primary" type="button" data-nav="create-race">Create your race</button>
+      </div>
 
-      <section class="panel" aria-labelledby="today-phase-heading">
-        <div class="panel-head">
-          <h2 class="panel-title" id="today-phase-heading">Right now</h2>
-          <span class="panel-sub" id="today-phase-label">Early prep</span>
-        </div>
-        <p class="panel-blurb" id="today-phase-blurb">Loading your plan.</p>
-        <ul class="row-list" id="today-tasks"></ul>
-        <button class="link-row" type="button" data-nav="prep">See the full list<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-chevron"/></svg></button>
-      </section>
+      <div id="today-has-race" hidden>
+        <button class="race-strip" id="race-strip" type="button" data-nav="race">
+          <div class="race-strip-top">
+            <span class="race-strip-name" id="today-race-name">Race name</span>
+            <svg class="icon icon-sm race-strip-chevron" aria-hidden="true"><use href="#icon-chevron"/></svg>
+          </div>
+          <div class="race-strip-meta" id="today-race-meta">Location · Date</div>
+          <div class="race-strip-count">
+            <span class="count-number" id="today-count-number">--</span>
+            <span class="count-unit" id="today-count-unit">days to go</span>
+          </div>
+        </button>
 
-      <button class="summary-row" type="button" data-nav="kit">
-        <svg class="icon" aria-hidden="true"><use href="#icon-bag"/></svg>
-        <span class="summary-row-text">
-          <span class="summary-row-title">Kit</span>
-          <span class="summary-row-detail" id="today-kit-summary">Checking your bags.</span>
-        </span>
-        <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-chevron"/></svg>
-      </button>
+        <section class="panel" aria-labelledby="today-phase-heading">
+          <div class="panel-head">
+            <h2 class="panel-title" id="today-phase-heading">Right now</h2>
+            <span class="panel-sub" id="today-phase-label">Early prep</span>
+          </div>
+          <p class="panel-blurb" id="today-phase-blurb">Loading your plan.</p>
+          <ul class="row-list" id="today-tasks"></ul>
+          <button class="link-row" type="button" data-nav="prep">See the full list<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-chevron"/></svg></button>
+        </section>
 
-      <button class="summary-row" type="button" data-nav="race">
-        <svg class="icon" aria-hidden="true"><use href="#icon-cloud-sun"/></svg>
-        <span class="summary-row-text">
-          <span class="summary-row-title">Race-day weather</span>
-          <span class="summary-row-detail" id="today-weather-summary">Not checked yet.</span>
-        </span>
-        <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-chevron"/></svg>
-      </button>
+        <button class="btn btn-primary" id="finish-race-btn" type="button" hidden>Finish and start a new race</button>
+
+        <button class="summary-row" type="button" data-nav="kit">
+          <svg class="icon" aria-hidden="true"><use href="#icon-bag"/></svg>
+          <span class="summary-row-text">
+            <span class="summary-row-title">Kit</span>
+            <span class="summary-row-detail" id="today-kit-summary">Checking your bags.</span>
+          </span>
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-chevron"/></svg>
+        </button>
+
+        <button class="summary-row" type="button" data-nav="race">
+          <svg class="icon" aria-hidden="true"><use href="#icon-cloud-sun"/></svg>
+          <span class="summary-row-text">
+            <span class="summary-row-title">Race-day weather</span>
+            <span class="summary-row-detail" id="today-weather-summary">Not checked yet.</span>
+          </span>
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-chevron"/></svg>
+        </button>
+      </div>
 
       <div class="footnote">
         <p>Everything you enter stays on this device. Nothing is uploaded anywhere.</p>
@@ -265,6 +277,63 @@
       </section>
 
       <p class="view-footnote">Weather data by Open-Meteo. Forecasts are only available within 16 days of race day.</p>
+    </section>
+
+    <!-- CREATE RACE (full page) -->
+    <section class="view" id="view-create-race" data-view="create-race" hidden>
+      <form id="form-create-race">
+        <label class="field">
+          <span class="field-label">Race name</span>
+          <input class="field-input" id="create-input-name" type="text" required maxlength="60" autocomplete="off" placeholder="e.g. Windsor Triathlon">
+        </label>
+        <label class="field">
+          <span class="field-label">Location</span>
+          <input class="field-input" id="create-input-location" type="text" required maxlength="80" autocomplete="off" placeholder="e.g. Dorney Lake, Windsor">
+        </label>
+        <div class="field-row">
+          <label class="field">
+            <span class="field-label">Date</span>
+            <input class="field-input" id="create-input-date" type="date" required>
+          </label>
+          <label class="field">
+            <span class="field-label">Start time</span>
+            <input class="field-input" id="create-input-time" type="time" required>
+          </label>
+        </div>
+        <label class="field">
+          <span class="field-label">Distance</span>
+          <select class="field-input" id="create-input-distance">
+            <option value="supersprint">Super sprint · 400m / 10km / 2.5km</option>
+            <option value="sprint">Sprint · 750m / 20km / 5km</option>
+            <option value="standard" selected>Standard (Olympic) · 1500m / 40km / 10km</option>
+            <option value="middle">Middle (70.3) · 1.9km / 90km / 21.1km</option>
+            <option value="long">Long (Ironman) · 3.8km / 180km / 42.2km</option>
+            <option value="custom">Custom distances</option>
+          </select>
+        </label>
+        <div class="field-row field-row-3" id="create-custom-distance-row" hidden>
+          <label class="field">
+            <span class="field-label">Swim (m)</span>
+            <input class="field-input" id="create-input-swim" type="number" inputmode="numeric" min="0" max="20000">
+          </label>
+          <label class="field">
+            <span class="field-label">Bike (km)</span>
+            <input class="field-input" id="create-input-bike" type="number" inputmode="decimal" min="0" max="400" step="0.1">
+          </label>
+          <label class="field">
+            <span class="field-label">Run (km)</span>
+            <input class="field-input" id="create-input-run" type="number" inputmode="decimal" min="0" max="120" step="0.1">
+          </label>
+        </div>
+        <label class="field">
+          <span class="field-label">Notes (optional)</span>
+          <textarea class="field-input field-textarea" id="create-input-notes" maxlength="200" rows="2" placeholder="Wave time, category, bib colour"></textarea>
+        </label>
+        <div class="create-race-actions">
+          <button class="btn btn-secondary" type="button" data-nav="today">Cancel</button>
+          <button class="btn btn-primary" type="submit">Create race</button>
+        </div>
+      </form>
     </section>
 
   </main>

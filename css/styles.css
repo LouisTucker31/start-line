@@ -182,6 +182,7 @@ input, select, textarea { font-family: inherit; font-size: 16px; }
 .tab span { font-size: var(--text-caption); font-weight: 600; }
 .tab[aria-current="true"] { color: var(--accent); }
 .tab:active { background: var(--bg-secondary); }
+.tab[hidden] { display: none; }
 
 /* ==========================================================================
    Shared components
@@ -347,6 +348,44 @@ input, select, textarea { font-family: inherit; font-size: 16px; }
 .footnote p {
   font-size: var(--text-caption);
   color: var(--text-secondary);
+}
+
+/* Empty state (Today view, no race set up yet) */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 56px 24px 24px;
+}
+.empty-state-icon {
+  width: 44px;
+  height: 44px;
+  stroke-width: 1.4;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.empty-state-title {
+  font-size: var(--text-title-2);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.empty-state-blurb {
+  font-size: var(--text-subheadline);
+  color: var(--text-secondary);
+  max-width: 34ch;
+  margin-bottom: 8px;
+}
+.empty-state .btn {
+  flex: none;
+  padding: 0 28px;
+}
+
+#today-has-race {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 /* Disclosure (details/summary) — phases, kit categories, rules */
@@ -654,6 +693,18 @@ dialog.sheet-alert .sheet-actions {
 .btn-secondary { background: var(--bg-secondary); color: var(--text-primary); }
 .btn-secondary:active { background: var(--separator); }
 .btn-destructive { background: var(--destructive); color: #FFFFFF; }
+
+/* Create race (full page) */
+#view-create-race #form-create-race {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.create-race-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
 
 /* ==========================================================================
    Motion, accessibility

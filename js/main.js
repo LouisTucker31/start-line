@@ -60,21 +60,25 @@ function seedItems(prefix, titles) {
   });
 }
 
+function blankRace() {
+  return {
+    name: "",
+    location: "",
+    date: "",
+    time: "",
+    distancePreset: "standard",
+    customSwim: null,
+    customBike: null,
+    customRun: null,
+    notes: "",
+    waterTemp: null
+  };
+}
+
 function defaultState() {
   return {
     version: 1,
-    race: {
-      name: "Windsor Triathlon",
-      location: "Dorney Lake, Windsor",
-      date: "2026-09-26",
-      time: "08:30",
-      distancePreset: "standard",
-      customSwim: null,
-      customBike: null,
-      customRun: null,
-      notes: "",
-      waterTemp: null
-    },
+    race: null,
     weatherCache: null,
     phases: {
       early: seedItems("early", [
@@ -180,7 +184,7 @@ function loadState() {
     if (!raw) return fallback;
     var parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object") return fallback;
-    parsed.race = Object.assign({}, fallback.race, parsed.race || {});
+    parsed.race = parsed.race ? Object.assign({}, blankRace(), parsed.race) : null;
     parsed.phases = parsed.phases || fallback.phases;
     parsed.kit = parsed.kit || fallback.kit;
     PHASE_ORDER.forEach(function (key) {
@@ -328,6 +332,8 @@ var els = {
   views: document.getElementById("views"),
   tabs: Array.prototype.slice.call(document.querySelectorAll(".tab")),
 
+  todayEmpty: document.getElementById("today-empty"),
+  todayHasRace: document.getElementById("today-has-race"),
   raceStrip: document.getElementById("race-strip"),
   todayRaceName: document.getElementById("today-race-name"),
   todayRaceMeta: document.getElementById("today-race-meta"),
@@ -339,6 +345,7 @@ var els = {
   todayKitSummary: document.getElementById("today-kit-summary"),
   todayWeatherSummary: document.getElementById("today-weather-summary"),
   resetLink: document.getElementById("reset-link"),
+  finishRaceBtn: document.getElementById("finish-race-btn"),
 
   prepIntro: document.getElementById("prep-intro"),
   phaseList: document.getElementById("phase-list"),
@@ -370,6 +377,18 @@ var els = {
   inputBike: document.getElementById("input-bike"),
   inputRun: document.getElementById("input-run"),
   inputNotes: document.getElementById("input-notes"),
+
+  formCreateRace: document.getElementById("form-create-race"),
+  createInputName: document.getElementById("create-input-name"),
+  createInputLocation: document.getElementById("create-input-location"),
+  createInputDate: document.getElementById("create-input-date"),
+  createInputTime: document.getElementById("create-input-time"),
+  createInputDistance: document.getElementById("create-input-distance"),
+  createCustomDistanceRow: document.getElementById("create-custom-distance-row"),
+  createInputSwim: document.getElementById("create-input-swim"),
+  createInputBike: document.getElementById("create-input-bike"),
+  createInputRun: document.getElementById("create-input-run"),
+  createInputNotes: document.getElementById("create-input-notes"),
 
   dialogAddItem: document.getElementById("dialog-add-item"),
   formAddItem: document.getElementById("form-add-item"),
@@ -534,6 +553,10 @@ function escapeHtml(str) {
 
 function renderToday() {
   var race = state.race;
+  els.todayEmpty.hidden = !!race;
+  els.todayHasRace.hidden = !race;
+  if (!race) return;
+
   els.todayRaceName.textContent = race.name || "Your race";
   els.todayRaceMeta.textContent = (race.location || "Location not set") + " \u00B7 " + formatDate(race.date);
 
@@ -545,6 +568,7 @@ function renderToday() {
   var meta = PHASE_META[phaseKey];
   els.todayPhaseLabel.textContent = meta.title;
   els.todayPhaseBlurb.textContent = meta.blurb;
+  els.finishRaceBtn.hidden = phaseKey !== "after";
 
   els.todayTasks.innerHTML = "";
   var outstanding = state.phases[phaseKey].filter(function (i) { return !i.done; }).slice(0, 3);
@@ -592,7 +616,7 @@ function describeWeatherShort(payload) {
 }
 
 function renderPrep() {
-  els.prepIntro.textContent = "Everything to do before, during and after " + (state.race.name || "your race") + ".";
+  els.prepIntro.textContent = "Everything to do before, during and after " + (state.race && state.race.name || "your race") + ".";
   els.phaseList.innerHTML = "";
   PHASE_ORDER.forEach(function (key) {
     var meta = PHASE_META[key];
@@ -633,6 +657,7 @@ function renderKit() {
 
 function renderRace() {
   var race = state.race;
+  if (!race) return;
   els.raceName.textContent = race.name || "Your race";
   els.raceMeta.textContent = (race.location || "Location not set") + " \u00B7 " + formatDate(race.date) + " \u00B7 " + race.time;
   els.raceCountdownChip.textContent = shortCountdownText();
@@ -829,17 +854,21 @@ function renderAll() {
   renderPrep();
   renderKit();
   renderRace();
+  updateTabbarVisibility();
 }
 
 /* ==========================================================================
    Navigation
    ========================================================================== */
 
-var VIEW_TITLES = { today: "Today", prep: "Prep", kit: "Kit", race: "Race" };
+var VIEW_TITLES = { today: "Today", prep: "Prep", kit: "Kit", race: "Race", "create-race": "Create your race" };
+var TABBED_VIEWS = ["today", "prep", "kit", "race"];
+var RACE_ONLY_VIEWS = ["prep", "kit", "race"];
 var currentView = "today";
 
 function navigate(view) {
   if (!VIEW_TITLES[view]) view = "today";
+  if (!state.race && RACE_ONLY_VIEWS.indexOf(view) !== -1) view = "today";
   currentView = view;
   Object.keys(VIEW_TITLES).forEach(function (key) {
     var section = document.getElementById("view-" + key);
@@ -851,6 +880,14 @@ function navigate(view) {
   els.topbarTitle.textContent = VIEW_TITLES[view];
   els.topbarAction.hidden = view !== "race";
   els.views.scrollTop = 0;
+  updateTabbarVisibility();
+}
+
+function updateTabbarVisibility() {
+  els.tabs.forEach(function (tab) {
+    var target = tab.dataset.target;
+    tab.hidden = !state.race && RACE_ONLY_VIEWS.indexOf(target) !== -1;
+  });
 }
 
 /* ==========================================================================
@@ -924,6 +961,16 @@ function toggleCustomDistanceRow() {
   els.customDistanceRow.hidden = els.inputDistance.value !== "custom";
 }
 
+function resetCreateRaceForm() {
+  els.formCreateRace.reset();
+  els.createInputDistance.value = "standard";
+  toggleCreateCustomDistanceRow();
+}
+
+function toggleCreateCustomDistanceRow() {
+  els.createCustomDistanceRow.hidden = els.createInputDistance.value !== "custom";
+}
+
 /* ==========================================================================
    Event wiring
    ========================================================================== */
@@ -933,23 +980,36 @@ els.tabs.forEach(function (tab) {
 });
 
 document.querySelectorAll("[data-nav]").forEach(function (el) {
-  el.addEventListener("click", function () { navigate(el.dataset.nav); });
+  el.addEventListener("click", function () {
+    if (el.dataset.nav === "create-race") resetCreateRaceForm();
+    navigate(el.dataset.nav);
+  });
 });
 
 els.topbarAction.addEventListener("click", openRaceDialog);
+
+function clearAllData() {
+  state = defaultState();
+  openPhases = new Set();
+  openKit = new Set();
+  saveState();
+  renderAll();
+  navigate("today");
+}
 
 els.resetLink.addEventListener("click", function () {
   confirmAction(
     "Reset all data",
     "This clears your race details and every checklist. This cannot be undone.",
-    function () {
-      state = defaultState();
-      openPhases = new Set();
-      openKit = new Set();
-      saveState();
-      renderAll();
-      navigate("today");
-    }
+    clearAllData
+  );
+});
+
+els.finishRaceBtn.addEventListener("click", function () {
+  confirmAction(
+    "Finish this race",
+    "This clears your race details and every checklist, ready for your next race. This cannot be undone.",
+    clearAllData
   );
 });
 
@@ -974,6 +1034,29 @@ els.formRace.addEventListener("submit", function (evt) {
   saveState();
   closeDialog(els.dialogRace);
   renderAll();
+});
+
+els.createInputDistance.addEventListener("change", toggleCreateCustomDistanceRow);
+
+els.formCreateRace.addEventListener("submit", function (evt) {
+  evt.preventDefault();
+  var race = blankRace();
+  race.name = els.createInputName.value.trim();
+  race.location = els.createInputLocation.value.trim();
+  race.date = els.createInputDate.value;
+  race.time = els.createInputTime.value;
+  race.distancePreset = els.createInputDistance.value;
+  race.customSwim = els.createInputSwim.value === "" ? null : parseFloat(els.createInputSwim.value);
+  race.customBike = els.createInputBike.value === "" ? null : parseFloat(els.createInputBike.value);
+  race.customRun = els.createInputRun.value === "" ? null : parseFloat(els.createInputRun.value);
+  race.notes = els.createInputNotes.value.trim();
+  state.race = race;
+  state.weatherCache = null;
+  openPhases = new Set();
+  openKit = new Set();
+  saveState();
+  renderAll();
+  navigate("today");
 });
 
 els.formAddItem.addEventListener("submit", function (evt) {
